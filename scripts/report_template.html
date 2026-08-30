@@ -1,0 +1,452 @@
+<title>Render Fault Readout</title>
+{{STYLE}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">GPU render-artifact detector &middot; validation readout</p>
+    <h1>Render Fault<br>Readout</h1>
+    <p class="lede">
+      A 1.2-million-parameter network that looks at one rendered frame and says whether the
+      graphics card that drew it was misbehaving &mdash; and which way. Here is what it sees,
+      what it gets right, and the one place it cannot possibly win.
+    </p>
+    <div class="hero-meta">
+      <span>8 epochs at 128&times;128</span>
+      <span>120 source frames</span>
+      <span>7&nbsp;ms per frame on CPU</span>
+      <span>19 of 21 checks pass</span>
+    </div>
+  </header>
+
+  <section class="readout">
+    <figure>
+      <img src="{{IMG:live_demo}}" alt="Animation of frames streaming past with the model's verdict and confidence bars updating for each one">
+      <figcaption>
+        The detector running. Each frame is drawn, damaged (or not), and judged in about 8&nbsp;ms;
+        the bars show how much confidence it puts behind every possible answer. Green border = it
+        agreed with the truth, red = it did not. Nothing here is staged &mdash; these are live verdicts
+        on frames it never trained on.
+      </figcaption>
+    </figure>
+  </section>
+
+  <div class="scoreboard">
+    <div class="score good">
+      <span class="score-value">90.7%</span>
+      <span class="score-label">catches a broken frame</span>
+    </div>
+    <div class="score">
+      <span class="score-value">82.6%</span>
+      <span class="score-label">names the right fault</span>
+    </div>
+    <div class="score bad">
+      <span class="score-value">0&ndash;4%</span>
+      <span class="score-label">channel swap at full severity</span>
+    </div>
+    <div class="score">
+      <span class="score-value">145</span>
+      <span class="score-label">frames per second, CPU</span>
+    </div>
+  </div>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What a broken frame actually looks like</h2>
+        <p>
+          Nobody had a library of glitched game frames to learn from, so the project makes its own.
+          It takes a clean frame and damages it in six ways that each imitate a real hardware failure,
+          with a severity dial from <span class="mono">0.2</span> (barely visible) to
+          <span class="mono">1.0</span> (catastrophic). Because the program chose the damage, it
+          already knows the right answer &mdash; that is where the training labels come from.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:artifact_catalog}}" alt="Grid showing six fault types across five severity levels next to the clean original frame">
+      <figcaption>
+        Left column is untouched. Read across to watch each fault escalate.
+        <span class="c-block">block_corruption</span> is a bad memory write,
+        <span class="c-tear">horizontal_tear</span> is the display updating mid-draw,
+        <span class="c-noise">shader_noise</span> is a compute unit producing nonsense,
+        <span class="c-stuck">stuck_pixels</span> are dead memory cells,
+        <span class="c-swap">channel_swap</span> is colour read with the wrong recipe, and
+        <span class="c-smear">texture_smear</span> is a texture that never finished loading.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What it learned from, and whether it finished</h2>
+        <p>
+          Training is a loop: guess, be told the answer, nudge 1.2&nbsp;million internal numbers slightly
+          towards being right, repeat. Two things about this particular run are worth seeing. The diet
+          was lopsided &mdash; a third of everything it saw was labelled clean &mdash; and the run was
+          stopped while it was still getting better.
+        </p>
+      </div>
+    </div>
+    <div class="plate-pair">
+      <figure>
+        <img src="{{IMG:class_balance}}" alt="Bar chart showing clean frames make up 29 percent of training data while each fault is 10 to 13 percent">
+        <figcaption>
+          &ldquo;Clean&rdquo; appears about 2.4&times; as often as any single fault. When a network is
+          unsure, it drifts toward the answer it has seen most &mdash; which is exactly the failure
+          pattern in section 04.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="{{IMG:training_curves}}" alt="Loss falling and accuracy rising over eight epochs, with accuracy still climbing at the end">
+        <figcaption>
+          Held-out accuracy went 37.8% &rarr; 82.3% and had not levelled off. Whatever else is wrong,
+          this model is simply undertrained.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What it gets right</h2>
+        <p>
+          The grid below is a confusion matrix: every row is what a frame really was, every column is
+          what the model called it. Correct answers land on the diagonal; everything off it is a
+          mistake, and <em>which</em> mistake matters. Confusing two faults with each other is a triage
+          problem. Confusing a fault with <span class="c-clean">clean</span> means a broken frame
+          shipped as fine &mdash; the one error that actually costs something.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:confusion}}" alt="Confusion matrix with strong diagonal, and notable counts of channel swap and texture smear called clean">
+      <figcaption>
+        <span class="c-noise">shader_noise</span> and <span class="c-stuck">stuck_pixels</span> are
+        perfect. The two dark red cells in the leftmost column are the story: 48
+        <span class="c-swap">channel_swap</span> and 67 <span class="c-smear">texture_smear</span>
+        frames waved through as clean.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="{{IMG:predictions}}" alt="Twelve held-out frames with the true label, the model's answer and its confidence, ten correct and two wrong">
+      <figcaption>
+        Twelve real verdicts, ten right. Note the third frame along the top row: violently striped,
+        genuinely clean, correctly ignored. Those hard negatives are drawn on purpose so the model
+        cannot pass by calling everything busy &ldquo;broken&rdquo;.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>Where it goes blind &mdash; and one fault it cannot win</h2>
+        <p>
+          A single accuracy number hides everything interesting. Split the same model by how severe the
+          damage was and the picture changes completely: three faults are caught perfectly at every
+          strength, and two fall apart at the quiet end where catching them would matter most.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:severity_curves}}" alt="Two line charts of detection and naming accuracy against severity, with channel swap collapsing to zero at severity 1.0">
+      <figcaption>
+        Left: did it notice anything was wrong. Right: did it name the fault.
+        <span class="c-smear">texture_smear</span> is near-invisible below severity 0.4 &mdash;
+        a mild smear looks like ordinary motion blur. And then there is the violet line falling off
+        a cliff at maximum severity, which is not a training problem at all.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="{{IMG:channel_swap_flaw}}" alt="A clean frame, a partial channel swap, and a full-frame channel swap that looks like a perfectly plausible clean frame">
+      <figcaption>
+        At severity 1.0, <span class="c-swap">channel_swap</span> permutes the colour channels of the
+        <em>entire</em> frame. There is no seam, no boundary, nothing local to find &mdash; and because
+        the source scenes are generated with randomised palettes, the result is a completely plausible
+        clean frame that happens to be labelled &ldquo;corrupted&rdquo;. The model calls it clean, and
+        the model is right. It is the training data that is wrong.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>Would real pictures be better?</h2>
+        <p>
+          Two different things here are synthetic, and only one of them has to be. The
+          <em>damage</em> is generated in code by necessity &mdash; that is where the labels come from,
+          and no library of pre-labelled glitched frames exists. The <em>clean frames underneath</em>
+          are drawn in code purely so the project runs with nothing to download. To test whether that
+          second choice costs anything, the same checkpoint was pointed at 24 real photographs it had
+          never seen, with the identical faults injected.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:real_vs_drawn}}" alt="Faults injected into real photographs beside a bar chart comparing accuracy on drawn frames versus real photos">
+      <figcaption>
+        Faults with a local pixel signature survive the move intact:
+        <span class="c-block">block_corruption</span>, <span class="c-noise">shader_noise</span>,
+        <span class="c-stuck">stuck_pixels</span> and <span class="c-swap">channel_swap</span> score
+        identically on photographs. The two faults defined by <em>structure</em> collapse &mdash;
+        <span class="c-tear">horizontal_tear</span> falls from 75% to 25%, and
+        <span class="c-smear">texture_smear</span> from 17% to nothing. Overall detection drops
+        90% &rarr; 74%.
+      </figcaption>
+    </figure>
+    <div class="findings">
+      <div class="finding is-warn">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Diagnosis</span>
+          <h3>It partly learned the generator, not the fault</h3>
+          <p>
+            A torn frame is only visible as a <em>displacement of something recognisable</em>. In a
+            drawn scene of flat colour blocks, sliding a band sideways leaves an obvious step. In a
+            photograph full of natural texture, the same slide hides in the noise. The detector had
+            been rewarded for spotting &ldquo;a discontinuity in flat colour&rdquo; &mdash; a property
+            of the drawing program, not of the hardware fault. Note which two faults this hits: the
+            same two that were already weakest.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>So we went and got real ones</h2>
+        <p>
+          The drawn frames have been replaced with <strong>1,550 real game captures</strong> pulled
+          from ten titles &mdash; Among Us, Apex Legends, Fortnite, Forza Horizon, Free Fire, Genshin
+          Impact, God of War, Minecraft, Roblox and Terraria. That is thirteen times the source
+          material, and far more importantly it is thirteen times more <em>varied</em>: real lighting,
+          HUD overlays, UI text, aliasing, compression and ten completely different art directions.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:dataset_sheet}}" alt="Contact sheet of twenty-four real game capture frames labelled by title">
+      <figcaption>
+        A sample of the new source set. A few frames are menu or browser screens rather than
+        gameplay &mdash; ordinary dataset noise, and arguably useful: a detector deployed for real
+        would meet loading screens and menus too.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="{{IMG:artifact_catalog_real}}" alt="The six faults across five severity levels, injected into a real game frame">
+      <figcaption>
+        The same six faults from section 01, now injected into a real frame. Compare them directly:
+        <span class="c-tear">horizontal_tear</span> is far subtler here, because sliding a band of
+        detailed scenery sideways leaves much less of a visible step than sliding a band of flat
+        colour. That is precisely the effect that made the old model collapse on real pictures.
+      </figcaption>
+    </figure>
+    <div class="findings">
+      <div class="finding is-warn">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Prediction, not yet a result</span>
+          <h3>Real frames may partly heal the channel-swap flaw on their own</h3>
+          <p>
+            A full-frame colour swap was unlearnable on drawn scenes because those scenes were
+            generated with random palettes &mdash; any colour was as plausible as any other. Real game
+            frames carry strong colour expectations: sky is blue, grass is green. Swapping the
+            channels of a real frame turns the sky magenta, which <em>is</em> evidence. The retrain
+            will show whether the network picks that up.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What the audit found</h2>
+        <p>
+          Twenty-one checks over the fault injectors, the data pipeline, the saved model and the
+          evaluation path. Nineteen pass. The two failures are both real, and neither is in the
+          network &mdash; they are in the scaffolding around it.
+        </p>
+      </div>
+    </div>
+    <div class="findings">
+      <div class="finding is-critical">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Contradictory labels &middot; corruption.py</span>
+          <h3>A full-frame channel swap is indistinguishable from a clean frame</h3>
+          <p>
+            At severity 1.0 the affected region grows to cover the whole image, so the &ldquo;fault&rdquo;
+            leaves no evidence behind. Detection collapses to essentially zero. Every one of those
+            samples teaches the network something false, and drags the honest cases down with it.
+          </p>
+        </div>
+      </div>
+      <div class="finding is-critical">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Silent mismatch &middot; evaluate.py</span>
+          <h3>Scoring uses a different mix of frames than training did</h3>
+          <p>
+            The evaluator rebuilds its test set from built-in defaults rather than from the recipe
+            stored in the checkpoint, so it grades with 35% clean frames against a model trained on
+            30%. Today the numbers are close enough to be believable; change a training setting and
+            the score silently stops describing the model you trained.
+          </p>
+        </div>
+      </div>
+      <div class="finding is-warn">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Imbalance &middot; dataset.py</span>
+          <h3>One class is 2.4&times; more common than the rest</h3>
+          <p>
+            &ldquo;Clean&rdquo; dominates the training diet, which biases every uncertain decision
+            toward it &mdash; visible as the two heavy cells in the leftmost column of the confusion
+            matrix.
+          </p>
+        </div>
+      </div>
+      <div class="finding is-ok">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Verified &middot; 19 checks</span>
+          <h3>The parts that hold up</h3>
+          <p>
+            Every injector returns a new, valid, genuinely-changed frame and rejects malformed input
+            rather than guessing. No source frame leaks between the training and test sets. The two
+            labels always agree. The test set is reproducible frame-for-frame. The checkpoint rebuilds
+            its own architecture without being told.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What to fix, in order</h2>
+        <p>
+          Ranked by what buys the most accuracy per hour spent. The first three are small, contained
+          edits; the last two are the difference between a demo and something that could watch a real
+          driver.
+        </p>
+      </div>
+    </div>
+    <div class="fixes">
+      <div class="fix">
+        <div>
+          <h3>Stop generating unlearnable channel swaps</h3>
+          <p>Cap the affected region below the full frame so a boundary always survives &mdash; one constant in <em>corruption.py</em>. Removes a whole class of self-contradicting training examples.</p>
+          <div class="chips"><span class="chip lo">1 line</span><span class="chip hi">high impact</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Even out the classes</h3>
+          <p>Drop the clean share to roughly one in seven, or weight the loss so a rare fault counts for more than a common clean frame. Directly attacks the &ldquo;when unsure, say clean&rdquo; bias.</p>
+          <div class="chips"><span class="chip lo">small</span><span class="chip hi">high impact</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Make the evaluator read the checkpoint's recipe</h3>
+          <p>Pull <em>clean_ratio</em> and the severity range from the saved settings the same way the architecture already is. Correctness, not accuracy &mdash; it stops the score from quietly lying later.</p>
+          <div class="chips"><span class="chip lo">small</span><span class="chip">correctness</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Train longer, at full resolution</h3>
+          <p>The accuracy curve had not flattened at eight epochs, and 128&times;128 throws away exactly the fine detail that separates a smear from motion blur. Try 30 epochs at 256&times;256.</p>
+          <div class="chips"><span class="chip">compute-bound</span><span class="chip hi">high impact</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Report accuracy by severity, not one number</h3>
+          <p>Every chart in section 04 exists because the headline number hid the answer. Bin the evaluation the same way so a regression at low severity cannot hide behind a good average.</p>
+          <div class="chips"><span class="chip">medium</span><span class="chip">visibility</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Teach the smear-versus-blur distinction explicitly</h3>
+          <p>Add motion blur, bloom and depth-of-field to the <em>clean</em> side. Right now nothing in the training data says these are acceptable, so the model has no reason to learn the line between them.</p>
+          <div class="chips"><span class="chip">medium</span><span class="chip hi">high impact</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Use real captured frames</h3>
+          <p>Measured cost of not doing this: detection falls 90% &rarr; 74% on pictures from outside the generator, and tear detection loses two thirds of its accuracy. Point <em>--clean-dir</em> at a folder of real captured frames &mdash; the pipeline already accepts them unchanged.</p>
+          <div class="chips"><span class="chip">large</span><span class="chip hi">high impact</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Ship an inference path and a test suite</h3>
+          <p>There is still no way to hand this program a single screenshot and get an answer, and no automated tests guarding any of the invariants the audit checked by hand.</p>
+          <div class="chips"><span class="chip">medium</span><span class="chip">foundational</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout">
+    <div class="readout-head">
+      <span class="readout-index">&mdash;</span>
+      <div class="readout-body">
+        <h2>Run it yourself</h2>
+        <p>Every figure on this page regenerates from the checkpoint in about a minute.</p>
+      </div>
+    </div>
+    <div class="commands">
+      <div class="command-row">
+        <code>py scripts/live_view.py</code>
+        <span>Opens the live window at the top of this page &mdash; watch verdicts arrive one frame at a time.</span>
+      </div>
+      <div class="command-row">
+        <code>py scripts/live_view.py --gif visuals/live_demo.gif --frames 28</code>
+        <span>Records that stream to a shareable animation instead of opening a window.</span>
+      </div>
+      <div class="command-row">
+        <code>py scripts/make_visuals.py</code>
+        <span>Rebuilds all seven figures into visuals/.</span>
+      </div>
+      <div class="command-row">
+        <code>py -m src.evaluate --checkpoint checkpoints/best.pt</code>
+        <span>Prints the confusion matrix, the per-fault report and the latency measurement.</span>
+      </div>
+      <div class="command-row">
+        <code>py -m src.train --epochs 30 --image-size 256 --samples-per-image 24</code>
+        <span>The retrain suggested by fix 04. Considerably slower than the run shown here.</span>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <footer>
+    Measured on the 8-epoch checkpoint at 128&times;128, CPU inference, 1,152 held-out samples.
+    Every number and figure on this page was generated from that checkpoint, not estimated.
+  </footer>
+
+</div>

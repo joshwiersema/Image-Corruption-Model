@@ -1,0 +1,102 @@
+{
+  "checkpoint": "checkpoints/pretrained/best.pt",
+  "device": "cpu",
+  "image_size": 160,
+  "num_samples": 1240,
+  "binary_accuracy": 0.9717741935483871,
+  "class_accuracy": 0.9612903225806452,
+  "class_names": [
+    "clean",
+    "block_corruption",
+    "horizontal_tear",
+    "shader_noise",
+    "stuck_pixels",
+    "channel_swap",
+    "texture_smear"
+  ],
+  "confusion_matrix": [
+    [
+      388,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      145,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      137,
+      0,
+      0,
+      1,
+      3
+    ],
+    [
+      0,
+      0,
+      0,
+      140,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      129,
+      0,
+      0
+    ],
+    [
+      21,
+      0,
+      0,
+      0,
+      0,
+      136,
+      0
+    ],
+    [
+      16,
+      0,
+      1,
+      0,
+      0,
+      4,
+      117
+    ]
+  ],
+  "latency_single": {
+    "batch_size": 1.0,
+    "frames": 300.0,
+    "mean_ms": 12.465598000320218,
+    "median_ms": 11.209549993509427,
+    "p95_ms": 16.510069994546942,
+    "min_ms": 9.23859998874832,
+    "max_ms": 100.78909998992458,
+    "fps": 80.22078042098838
+  },
+  "latency_batched": {
+    "batch_size": 32.0,
+    "frames": 9.0,
+    "mean_ms": 9.521769791667289,
+    "median_ms": 9.49923750022208,
+    "p95_ms": 9.754770624931552,
+    "min_ms": 9.252278125131852,
+    "max_ms": 9.797009374779009,
+    "fps": 105.02249286420704
+  }
+}

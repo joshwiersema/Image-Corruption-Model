@@ -1,0 +1,498 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "loss": 1.4427709294903663,
+      "binary_accuracy": 0.6707661290322581,
+      "class_accuracy": 0.5300403225806452,
+      "per_class_accuracy": {
+        "clean": 0.9342560553633218,
+        "block_corruption": 0.6416819012797075,
+        "horizontal_tear": 0.07572815533980583,
+        "shader_noise": 0.7871939736346516,
+        "stuck_pixels": 0.3462897526501767,
+        "channel_swap": 0.0,
+        "texture_smear": 0.009689922480620155
+      }
+    },
+    "val": {
+      "loss": 1.2079189615864907,
+      "binary_accuracy": 0.6911290322580645,
+      "class_accuracy": 0.5903225806451613,
+      "per_class_accuracy": {
+        "clean": 0.9948453608247423,
+        "block_corruption": 0.8571428571428571,
+        "horizontal_tear": 0.09929078014184398,
+        "shader_noise": 0.9571428571428572,
+        "stuck_pixels": 0.5581395348837209,
+        "channel_swap": 0.0,
+        "texture_smear": 0.0
+      }
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "loss": 1.0562575847871842,
+      "binary_accuracy": 0.7286290322580645,
+      "class_accuracy": 0.6665322580645161,
+      "per_class_accuracy": {
+        "clean": 0.9788087056128293,
+        "block_corruption": 0.916,
+        "horizontal_tear": 0.2828828828828829,
+        "shader_noise": 0.9543795620437956,
+        "stuck_pixels": 0.8547486033519553,
+        "channel_swap": 0.0,
+        "texture_smear": 0.0
+      }
+    },
+    "val": {
+      "loss": 0.9716397377752488,
+      "binary_accuracy": 0.7459677419354839,
+      "class_accuracy": 0.6629032258064517,
+      "per_class_accuracy": {
+        "clean": 1.0,
+        "block_corruption": 0.9319727891156463,
+        "horizontal_tear": 0.3617021276595745,
+        "shader_noise": 0.9785714285714285,
+        "stuck_pixels": 0.8449612403100775,
+        "channel_swap": 0.0,
+        "texture_smear": 0.0
+      }
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "loss": 0.9063117019591793,
+      "binary_accuracy": 0.75625,
+      "class_accuracy": 0.7020161290322581,
+      "per_class_accuracy": {
+        "clean": 0.9768115942028985,
+        "block_corruption": 0.9097744360902256,
+        "horizontal_tear": 0.6051080550098232,
+        "shader_noise": 0.9731285988483686,
+        "stuck_pixels": 0.9200743494423792,
+        "channel_swap": 0.003389830508474576,
+        "texture_smear": 0.001834862385321101
+      }
+    },
+    "val": {
+      "loss": 0.7513071437035838,
+      "binary_accuracy": 0.7959677419354839,
+      "class_accuracy": 0.7379032258064516,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.8085106382978723,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.0,
+        "texture_smear": 0.0
+      }
+    }
+  },
+  {
+    "epoch": 4,
+    "train": {
+      "loss": 0.7869455172169593,
+      "binary_accuracy": 0.8084677419354839,
+      "class_accuracy": 0.7477822580645161,
+      "per_class_accuracy": {
+        "clean": 0.9766248574686431,
+        "block_corruption": 0.9592592592592593,
+        "horizontal_tear": 0.7508771929824561,
+        "shader_noise": 0.9748062015503876,
+        "stuck_pixels": 0.9659735349716446,
+        "channel_swap": 0.005714285714285714,
+        "texture_smear": 0.06273764258555133
+      }
+    },
+    "val": {
+      "loss": 0.6740114404309181,
+      "binary_accuracy": 0.8564516129032258,
+      "class_accuracy": 0.7790322580645161,
+      "per_class_accuracy": {
+        "clean": 0.9922680412371134,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.900709219858156,
+        "shader_noise": 0.9928571428571429,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.12101910828025478,
+        "texture_smear": 0.17391304347826086
+      }
+    }
+  },
+  {
+    "epoch": 5,
+    "train": {
+      "loss": 0.7110165211462205,
+      "binary_accuracy": 0.8419354838709677,
+      "class_accuracy": 0.7693548387096775,
+      "per_class_accuracy": {
+        "clean": 0.9494479953515398,
+        "block_corruption": 0.965183752417795,
+        "horizontal_tear": 0.7805825242718447,
+        "shader_noise": 0.9927404718693285,
+        "stuck_pixels": 0.974903474903475,
+        "channel_swap": 0.10720887245841035,
+        "texture_smear": 0.2864321608040201
+      }
+    },
+    "val": {
+      "loss": 0.5405563623674454,
+      "binary_accuracy": 0.8951612903225806,
+      "class_accuracy": 0.8387096774193549,
+      "per_class_accuracy": {
+        "clean": 0.9948453608247423,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.8723404255319149,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.3057324840764331,
+        "texture_smear": 0.5144927536231884
+      }
+    }
+  },
+  {
+    "epoch": 6,
+    "train": {
+      "loss": 0.5887665606314136,
+      "binary_accuracy": 0.8893145161290322,
+      "class_accuracy": 0.8205645161290323,
+      "per_class_accuracy": {
+        "clean": 0.9561659848042081,
+        "block_corruption": 0.9594356261022927,
+        "horizontal_tear": 0.7992700729927007,
+        "shader_noise": 0.9862745098039216,
+        "stuck_pixels": 0.9831144465290806,
+        "channel_swap": 0.2692307692307692,
+        "texture_smear": 0.48911222780569513
+      }
+    },
+    "val": {
+      "loss": 0.4417871359855898,
+      "binary_accuracy": 0.9185483870967742,
+      "class_accuracy": 0.8717741935483871,
+      "per_class_accuracy": {
+        "clean": 0.9819587628865979,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.9432624113475178,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.4394904458598726,
+        "texture_smear": 0.6086956521739131
+      }
+    }
+  },
+  {
+    "epoch": 7,
+    "train": {
+      "loss": 0.5450101302516076,
+      "binary_accuracy": 0.8993951612903226,
+      "class_accuracy": 0.8381048387096774,
+      "per_class_accuracy": {
+        "clean": 0.9616502033701336,
+        "block_corruption": 0.9829545454545454,
+        "horizontal_tear": 0.8178506375227687,
+        "shader_noise": 0.9946902654867257,
+        "stuck_pixels": 0.9898167006109979,
+        "channel_swap": 0.40325497287522605,
+        "texture_smear": 0.4755877034358047
+      }
+    },
+    "val": {
+      "loss": 0.4159960004591173,
+      "binary_accuracy": 0.9266129032258065,
+      "class_accuracy": 0.8903225806451613,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.8936170212765957,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.5414012738853503,
+        "texture_smear": 0.6811594202898551
+      }
+    }
+  },
+  {
+    "epoch": 8,
+    "train": {
+      "loss": 0.4516160351614798,
+      "binary_accuracy": 0.9241935483870968,
+      "class_accuracy": 0.8721774193548387,
+      "per_class_accuracy": {
+        "clean": 0.9699157641395909,
+        "block_corruption": 0.9633204633204633,
+        "horizontal_tear": 0.8488964346349746,
+        "shader_noise": 0.9939879759519038,
+        "stuck_pixels": 0.9871323529411765,
+        "channel_swap": 0.546875,
+        "texture_smear": 0.6416083916083916
+      }
+    },
+    "val": {
+      "loss": 0.3279999823339524,
+      "binary_accuracy": 0.9411290322580645,
+      "class_accuracy": 0.9161290322580645,
+      "per_class_accuracy": {
+        "clean": 0.9922680412371134,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.9219858156028369,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.7388535031847133,
+        "texture_smear": 0.6739130434782609
+      }
+    }
+  },
+  {
+    "epoch": 9,
+    "train": {
+      "loss": 0.3895484395565525,
+      "binary_accuracy": 0.9372983870967742,
+      "class_accuracy": 0.8921370967741935,
+      "per_class_accuracy": {
+        "clean": 0.9727891156462585,
+        "block_corruption": 0.9690721649484536,
+        "horizontal_tear": 0.8757062146892656,
+        "shader_noise": 0.9979123173277662,
+        "stuck_pixels": 0.9922630560928434,
+        "channel_swap": 0.6375,
+        "texture_smear": 0.6299810246679317
+      }
+    },
+    "val": {
+      "loss": 0.2948279490393977,
+      "binary_accuracy": 0.9548387096774194,
+      "class_accuracy": 0.9217741935483871,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.8723404255319149,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.7133757961783439,
+        "texture_smear": 0.7898550724637681
+      }
+    }
+  },
+  {
+    "epoch": 10,
+    "train": {
+      "loss": 0.30844466791998953,
+      "binary_accuracy": 0.9495967741935484,
+      "class_accuracy": 0.915725806451613,
+      "per_class_accuracy": {
+        "clean": 0.9728199320498301,
+        "block_corruption": 0.9829222011385199,
+        "horizontal_tear": 0.8732142857142857,
+        "shader_noise": 0.9947552447552448,
+        "stuck_pixels": 0.9923371647509579,
+        "channel_swap": 0.7134268537074149,
+        "texture_smear": 0.7276264591439688
+      }
+    },
+    "val": {
+      "loss": 0.2775358552894285,
+      "binary_accuracy": 0.9483870967741935,
+      "class_accuracy": 0.9338709677419355,
+      "per_class_accuracy": {
+        "clean": 1.0,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.9361702127659575,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.7515923566878981,
+        "texture_smear": 0.7681159420289855
+      }
+    }
+  },
+  {
+    "epoch": 11,
+    "train": {
+      "loss": 0.32656268746622147,
+      "binary_accuracy": 0.9431451612903226,
+      "class_accuracy": 0.9133064516129032,
+      "per_class_accuracy": {
+        "clean": 0.9721563981042654,
+        "block_corruption": 0.9705340699815838,
+        "horizontal_tear": 0.8770343580470162,
+        "shader_noise": 0.9981132075471698,
+        "stuck_pixels": 0.9981481481481481,
+        "channel_swap": 0.7023593466424682,
+        "texture_smear": 0.7603603603603604
+      }
+    },
+    "val": {
+      "loss": 0.23071084993500862,
+      "binary_accuracy": 0.9620967741935483,
+      "class_accuracy": 0.9443548387096774,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.950354609929078,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8152866242038217,
+        "texture_smear": 0.782608695652174
+      }
+    }
+  },
+  {
+    "epoch": 12,
+    "train": {
+      "loss": 0.297138705753511,
+      "binary_accuracy": 0.9524193548387097,
+      "class_accuracy": 0.9211693548387097,
+      "per_class_accuracy": {
+        "clean": 0.9820601851851852,
+        "block_corruption": 0.9839285714285714,
+        "horizontal_tear": 0.8745583038869258,
+        "shader_noise": 0.9942965779467681,
+        "stuck_pixels": 0.9941860465116279,
+        "channel_swap": 0.7442307692307693,
+        "texture_smear": 0.7408088235294118
+      }
+    },
+    "val": {
+      "loss": 0.20273817162359914,
+      "binary_accuracy": 0.9685483870967742,
+      "class_accuracy": 0.9548387096774194,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9727891156462585,
+        "horizontal_tear": 0.9716312056737588,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8471337579617835,
+        "texture_smear": 0.8333333333333334
+      }
+    }
+  },
+  {
+    "epoch": 13,
+    "train": {
+      "loss": 0.24325849202371413,
+      "binary_accuracy": 0.9610887096774193,
+      "class_accuracy": 0.9387096774193548,
+      "per_class_accuracy": {
+        "clean": 0.9879448909299655,
+        "block_corruption": 0.9790209790209791,
+        "horizontal_tear": 0.9112318840579711,
+        "shader_noise": 0.9980506822612085,
+        "stuck_pixels": 0.9962616822429906,
+        "channel_swap": 0.7953736654804271,
+        "texture_smear": 0.7851239669421488
+      }
+    },
+    "val": {
+      "loss": 0.1935047144851377,
+      "binary_accuracy": 0.967741935483871,
+      "class_accuracy": 0.9524193548387097,
+      "per_class_accuracy": {
+        "clean": 1.0,
+        "block_corruption": 0.9795918367346939,
+        "horizontal_tear": 0.9716312056737588,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8471337579617835,
+        "texture_smear": 0.7971014492753623
+      }
+    }
+  },
+  {
+    "epoch": 14,
+    "train": {
+      "loss": 0.2411389143236222,
+      "binary_accuracy": 0.9620967741935483,
+      "class_accuracy": 0.9362903225806452,
+      "per_class_accuracy": {
+        "clean": 0.9806678383128296,
+        "block_corruption": 0.9792027729636048,
+        "horizontal_tear": 0.9135559921414538,
+        "shader_noise": 0.9981884057971014,
+        "stuck_pixels": 0.9946236559139785,
+        "channel_swap": 0.801980198019802,
+        "texture_smear": 0.7771739130434783
+      }
+    },
+    "val": {
+      "loss": 0.16876644266228522,
+      "binary_accuracy": 0.9661290322580646,
+      "class_accuracy": 0.9588709677419355,
+      "per_class_accuracy": {
+        "clean": 0.9974226804123711,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.9716312056737588,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8471337579617835,
+        "texture_smear": 0.855072463768116
+      }
+    }
+  },
+  {
+    "epoch": 15,
+    "train": {
+      "loss": 0.21357922304061153,
+      "binary_accuracy": 0.967741935483871,
+      "class_accuracy": 0.9477822580645161,
+      "per_class_accuracy": {
+        "clean": 0.9843840370156159,
+        "block_corruption": 0.9926605504587156,
+        "horizontal_tear": 0.9349005424954792,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8127413127413128,
+        "texture_smear": 0.8214285714285714
+      }
+    },
+    "val": {
+      "loss": 0.1668084700261393,
+      "binary_accuracy": 0.9693548387096774,
+      "class_accuracy": 0.9580645161290322,
+      "per_class_accuracy": {
+        "clean": 1.0,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.9787234042553191,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8535031847133758,
+        "texture_smear": 0.8260869565217391
+      }
+    }
+  },
+  {
+    "epoch": 16,
+    "train": {
+      "loss": 0.2287122437069493,
+      "binary_accuracy": 0.9649193548387097,
+      "class_accuracy": 0.9405241935483871,
+      "per_class_accuracy": {
+        "clean": 0.9849884526558892,
+        "block_corruption": 0.9747081712062257,
+        "horizontal_tear": 0.9384328358208955,
+        "shader_noise": 1.0,
+        "stuck_pixels": 0.99812734082397,
+        "channel_swap": 0.8055555555555556,
+        "texture_smear": 0.794392523364486
+      }
+    },
+    "val": {
+      "loss": 0.154322752308461,
+      "binary_accuracy": 0.9717741935483871,
+      "class_accuracy": 0.9612903225806452,
+      "per_class_accuracy": {
+        "clean": 1.0,
+        "block_corruption": 0.9863945578231292,
+        "horizontal_tear": 0.9716312056737588,
+        "shader_noise": 1.0,
+        "stuck_pixels": 1.0,
+        "channel_swap": 0.8662420382165605,
+        "texture_smear": 0.8478260869565217
+      }
+    }
+  }
+]

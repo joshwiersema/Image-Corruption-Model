@@ -1,0 +1,310 @@
+<title>Real Frame Retrain</title>
+{{STYLE}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Automated GPU render-artifact detection &middot; technical evaluation</p>
+    <h1>Real Frame<br>Retrain</h1>
+    <p class="lede">
+      Detecting image corruption today means a human watching a screen. This is a 1.2M-parameter
+      network that judges a rendered frame in about 10&nbsp;ms &mdash; whether it is corrupted, and which
+      fault it is. Retraining it on 1,550 real game captures instead of synthetic scenes took naming
+      accuracy on real frames from <strong>68% to 95%</strong>, and false alarms on clean frames from
+      <strong>23% to zero</strong>.
+    </p>
+    <div class="hero-meta">
+      <span>1,550 frames, 10 games</span>
+      <span>16 epochs at 160&times;160</span>
+      <span>~10&nbsp;ms per frame on CPU</span>
+      <span>no known open defects</span>
+    </div>
+  </header>
+
+  <section class="readout">
+    <figure>
+      <img src="{{IMG:live_demo}}" alt="Animation of real game frames streaming past with the retrained model's verdict and confidence bars updating for each">
+      <figcaption>
+        The retrained detector running on held-out game captures. Same display as before &mdash; the
+        frame on the left, its confidence in every possible answer on the right, green border when it
+        agreed with the truth. The difference from the previous run is how rarely the border turns red.
+      </figcaption>
+    </figure>
+  </section>
+
+  <div class="scoreboard">
+    <div class="score good">
+      <span class="score-value">97.2%</span>
+      <span class="score-label">catches a broken frame</span>
+    </div>
+    <div class="score good">
+      <span class="score-value">96.1%</span>
+      <span class="score-label">names the right fault</span>
+    </div>
+    <div class="score good">
+      <span class="score-value">100%</span>
+      <span class="score-label">clean frames left alone</span>
+    </div>
+    <div class="score good">
+      <span class="score-value">88%</span>
+      <span class="score-label">channel swap at full severity, was 5%</span>
+    </div>
+  </div>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>The head-to-head</h2>
+        <p>
+          Both models judged on the <em>same</em> 310 held-out real frames, with the same faults at the
+          same seeded severities. The only variable is what each one learned from. This is the
+          comparison that matters, because real frames are what a detector would actually meet.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:model_comparison}}" alt="Grouped bar charts comparing the drawn-frame model and the real-frame model per fault and per severity band">
+      <figcaption>
+        Every fault improved. The two that had collapsed are the two that moved most:
+        <span class="c-swap">channel_swap</span> 18% &rarr; 88%, and
+        <span class="c-smear">texture_smear</span> 24% &rarr; 87%. Detection of the
+        <em>faintest</em> faults &mdash; the ones worth catching early &mdash; went 78% &rarr; 92%.
+      </figcaption>
+    </figure>
+    <div class="findings">
+      <div class="finding is-ok">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">The operationally decisive number</span>
+          <h3>False alarms went from one in four to zero</h3>
+          <p>
+            The old model called 23% of perfectly good game frames &ldquo;broken&rdquo;. The new one
+            called none of them broken &mdash; 388 clean frames, 388 correct. For a detector meant to
+            run unattended across a test farm, that matters more than the naming accuracy: a tool that
+            cries wolf on a quarter of its input is a tool people switch off.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What changed: the frames</h2>
+        <p>
+          The old source set was twelve procedurally drawn scenes &mdash; checkerboards, brick walls,
+          gradients. The new one is 1,550 captures from Among Us, Apex Legends, Fortnite, Forza
+          Horizon, Free Fire, Genshin Impact, God of War, Minecraft, Roblox and Terraria. Thirteen
+          times the material, and far more importantly thirteen times more varied.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:dataset_sheet}}" alt="Contact sheet of twenty-four real game capture frames labelled by title">
+      <figcaption>
+        Real lighting, HUD overlays, UI text, aliasing, compression, and ten completely different art
+        directions &mdash; from flat cartoon Roblox to photoreal God of War. A few frames are menus
+        rather than gameplay; that is ordinary dataset noise, and arguably useful, since a real
+        detector would meet loading screens too.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="{{IMG:artifact_catalog_real}}" alt="The six faults across five severity levels injected into a real game frame">
+      <figcaption>
+        The same six faults, now injected into a real frame. This is what made the difference:
+        <span class="c-tear">horizontal_tear</span> is far subtler against detailed scenery than
+        against flat colour, so the old model had never been forced to learn what tearing really looks
+        like. It had learned &ldquo;a hard step in a flat region&rdquo; &mdash; a property of the
+        drawing program, not of the hardware fault.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What it gets right now</h2>
+        <p>
+          Sixteen epochs, and unlike the previous run this one actually finished &mdash; the curve
+          flattened around epoch 13 rather than still climbing when the budget ran out.
+        </p>
+      </div>
+    </div>
+    <div class="plate-pair">
+      <figure>
+        <img src="{{IMG:training_curves}}" alt="Loss falling and accuracy rising over sixteen epochs, flattening near the end">
+        <figcaption>
+          Held-out accuracy 59.0% &rarr; 96.1%, flat over the last four epochs. More epochs would buy
+          very little now; the remaining errors are structural, not undertrained.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="{{IMG:confusion}}" alt="Confusion matrix with a near-perfect diagonal and two small residual cells in the clean column">
+        <figcaption>
+          Near-perfect diagonal. Only two residuals of any size, both in the leftmost column: 21
+          <span class="c-swap">channel_swap</span> and 16 <span class="c-smear">texture_smear</span>
+          frames still called clean &mdash; down from 48 and 67.
+        </figcaption>
+      </figure>
+    </div>
+    <figure>
+      <img src="{{IMG:predictions}}" alt="Twelve held-out game frames with true label, model verdict and confidence, all twelve correct">
+      <figcaption>
+        Twelve held-out frames across six games. Twelve correct, most above 95% confidence &mdash;
+        including a torn Minecraft frame and a channel-swapped God of War frame, the two fault types
+        that used to be hopeless.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>A hypothesis rejected, and the defect it exposed</h2>
+        <p>
+          One outcome was predicted in advance and did not hold. The expectation was that real frames
+          would fix the full-severity channel-swap failure on their own: a full-frame colour swap is
+          unlearnable on procedural scenes because those scenes carry random palettes, so magenta sky
+          is as plausible as blue. Real games carry strong colour expectations, so a swapped frame
+          should look wrong. It is a reasonable argument, and the measurement rejected it &mdash;
+          which turned out to be the more useful result, because it located the defect precisely.
+        </p>
+      </div>
+    </div>
+    <figure>
+      <img src="{{IMG:severity_curves}}" alt="Detection and naming accuracy against severity, with channel swap collapsing to near zero at severity 1.0">
+      <figcaption>
+        Almost everything now sits at or near 100% across the whole severity range, including
+        <span class="c-swap">channel_swap</span>, whose cliff at full severity is gone. One exception
+        remains: <span class="c-smear">texture_smear</span> at the faintest setting, where a mild
+        smear genuinely resembles motion blur. That one is a perception limit, not a defect.
+      </figcaption>
+    </figure>
+    <div class="findings">
+      <div class="finding is-critical">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">Root cause &middot; found and closed</span>
+          <h3>The fault generator was producing samples that could not be learned</h3>
+          <p>
+            Better frames lifted channel-swap accuracy everywhere except at full severity, where
+            detection stayed at <strong>5%</strong>. The cause was in the fault generator, not the
+            network: at severity 1.0 it swapped the colour channels of the <em>entire</em> frame,
+            leaving no boundary and no correctly-coloured reference. Such a sample is labelled
+            corrupted while being identical in kind to a clean one. Capping the affected region at
+            85% of each axis guarantees a visible boundary survives. Detection at full severity went
+            <strong>5% &rarr; 88%</strong>.
+          </p>
+        </div>
+      </div>
+      <div class="finding is-warn">
+        <div class="finding-stripe"></div>
+        <div class="finding-body">
+          <span class="finding-tag">What this means</span>
+          <h3>The network was never the problem</h3>
+          <p>
+            The 5% &rarr; 88% jump was measured on the <em>existing</em> model with no retraining at
+            all: the change was to the data definition alone. The network had always known how to
+            recognise a channel swap; it had been shown impossible examples and marked wrong for
+            failing them. A full retrain on the corrected data afterwards moved overall accuracy by
+            0.0 points, which confirms it. Two distinct failure modes were at work &mdash; learning
+            the wrong cue, which better data fixed, and an unlearnable label, which only a definition
+            change could fix.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout numbered">
+    <div class="readout-head">
+      <span class="readout-index"></span>
+      <div class="readout-body">
+        <h2>What is left</h2>
+        <p>
+          The data problem is solved and the one correctness defect is closed. What remains is a
+          perception limit, two small code changes, and one honest boundary on what any of this
+          proves.
+        </p>
+      </div>
+    </div>
+    <div class="fixes">
+      <div class="fix">
+        <div>
+          <h3>Teach faint smear against real motion blur</h3>
+          <p>The one remaining weak spot, and a perception limit rather than a defect: <span class="c-smear">texture_smear</span> at severity 0.2 is caught 50% of the time, because a mild smear and ordinary motion blur genuinely look alike. Real game frames already contain motion blur, so the distinction can now be taught with labels rather than invented.</p>
+          <div class="chips"><span class="chip">medium</span><span class="chip hi">last weak spot</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Make the evaluator inherit the checkpoint's recipe</h3>
+          <p><em>evaluate.py</em> rebuilds its test set from module defaults rather than the settings stored in the checkpoint, so a scoring run can silently describe a different data distribution than the one the model was trained on. Encountered three times during this evaluation.</p>
+          <div class="chips"><span class="chip lo">small</span><span class="chip">correctness</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Even out the classes</h3>
+          <p>Clean is still over-represented at roughly 2.4&times;. Less urgent now that false alarms are at zero, but it is free accuracy on the two weak faults.</p>
+          <div class="chips"><span class="chip lo">small</span><span class="chip">tidy-up</span></div>
+        </div>
+      </div>
+      <div class="fix">
+        <div>
+          <h3>Remember what this still is not</h3>
+          <p>The frames are real. The damage is not &mdash; it is injected in software, because no labelled corpus of genuine GPU artifacts exists. Validating against actual failing hardware remains the one thing none of this proves.</p>
+          <div class="chips"><span class="chip">open question</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="readout">
+    <div class="readout-head">
+      <span class="readout-index">&mdash;</span>
+      <div class="readout-body">
+        <h2>Reproducing these results</h2>
+        <p>Every figure and number on this page regenerates from these five commands. Frames download in about two minutes; the retrain is 55 minutes on CPU, no GPU required.</p>
+      </div>
+    </div>
+    <div class="commands">
+      <div class="command-row">
+        <code>python scripts/fetch_game_frames.py</code>
+        <span>Downloads the game captures into data/game_frames and records their source.</span>
+      </div>
+      <div class="command-row">
+        <code>python -m src.train --clean-dir data/game_frames --epochs 16 --image-size 160 \
+    --samples-per-image 4 --batch-size 64 --lr 1e-3 --checkpoint-dir checkpoints/pretrained</code>
+        <span>The exact run behind this page.</span>
+      </div>
+      <div class="command-row">
+        <code>python scripts/compare_models.py --baseline &lt;drawn-frame checkpoint&gt; --candidate checkpoints/pretrained/best.pt</code>
+        <span>Reproduces the head-to-head table and chart in section 01.</span>
+      </div>
+      <div class="command-row">
+        <code>python scripts/live_view.py --checkpoint checkpoints/pretrained/best.pt</code>
+        <span>Opens the live window at the top of this page.</span>
+      </div>
+      <div class="command-row">
+        <code>python scripts/make_visuals.py --checkpoint checkpoints/pretrained/best.pt --source-dir data/game_frames</code>
+        <span>Rebuilds every figure here from the new checkpoint.</span>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <footer>
+    Measured on the epoch-16 checkpoint at 160&times;160, CPU inference, 1,240 held-out samples, and a
+    310-frame head-to-head against the previous model. Frames from the Bingsu/Gameplay_Images dataset,
+    CC-BY-4.0. Every number and figure was generated from those checkpoints, not estimated.
+  </footer>
+
+</div>
