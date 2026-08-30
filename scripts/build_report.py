@@ -7,7 +7,7 @@ own images and can be published or emailed as one file.
 Usage::
 
     python scripts/build_report.py
-    python scripts/build_report.py --output docs/index.html
+    python scripts/build_report.py --output docs/index.html --standalone
 """
 
 from __future__ import annotations
@@ -29,6 +29,24 @@ DEFAULT_OUTPUT: Path = VISUAL_DIR / "report_v2.html"
 PLACEHOLDER = re.compile(r"\{\{IMG:([A-Za-z0-9_\-]+)\}\}")
 STYLE_PLACEHOLDER: str = "{{STYLE}}"
 STYLE_PATH: Path = Path(__file__).resolve().parent / "report_style.css"
+
+#: Document skeleton for hosting the report anywhere other than as an Artifact.
+#: The Artifact host wraps published HTML in exactly this much of a shell — a
+#: charset, a viewport, and a minimal reset — so a standalone copy has to supply
+#: it or the page renders with the browser's default body margin instead.
+STANDALONE_HEAD: str = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+"""
+STANDALONE_TAIL: str = "\n</body>\n</html>\n"
 MIME_TYPES: dict[str, str] = {".png": "image/png", ".gif": "image/gif",
                               ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
 #: Published artifacts are capped at 16MB including inlined data.
@@ -57,8 +75,40 @@ def data_uri(path: Path) -> str:
     return f"data:{MIME_TYPES[path.suffix.lower()]};base64,{encoded}"
 
 
-def build(template_path: Path, output_path: Path) -> int:
-    """Render the template with every image inlined; returns an exit code."""
+#: Elements a template writes at the top of its body that belong in <head>.
+HEAD_ELEMENTS = re.compile(
+    r"<title>.*?</title>|<style>.*?</style>|<link\b[^>]*>", re.S | re.I
+)
+
+
+def wrap_standalone(body: str) -> str:
+    """Wrap rendered report HTML in a complete, valid HTML document.
+
+    Templates are authored for the Artifact runtime, which supplies the document
+    shell, so they open with a bare ``<title>``/``<style>``/``<link>`` run. Those
+    are hoisted into a real ``<head>`` here rather than left in the body for the
+    browser's error recovery to sort out.
+    """
+    head_parts: list[str] = []
+
+    def lift(match: re.Match[str]) -> str:
+        head_parts.append(match.group(0))
+        return ""
+
+    stripped = HEAD_ELEMENTS.sub(lift, body, count=0).strip()
+    head = "\n".join(head_parts)
+    return f"{STANDALONE_HEAD}{head}\n</head>\n<body>\n{stripped}{STANDALONE_TAIL}"
+
+
+def build(template_path: Path, output_path: Path, standalone: bool = False) -> int:
+    """Render the template with every image inlined; returns an exit code.
+
+    Args:
+        template_path: Report template containing ``{{STYLE}}`` and ``{{IMG:*}}``.
+        output_path: File to write.
+        standalone: Wrap the result in a full HTML document, for hosting outside
+            the Artifact runtime (GitHub Pages, a plain web server, email).
+    """
     if not template_path.is_file():
         print(f"error: template not found: {template_path}")
         return 2
@@ -90,6 +140,9 @@ def build(template_path: Path, output_path: Path) -> int:
         print(f"error: template has no {{{{IMG:...}}}} placeholders")
         return 2
 
+    if standalone:
+        rendered = wrap_standalone(rendered)
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(rendered, encoding="utf-8")
 
@@ -109,13 +162,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--template", type=Path, default=TEMPLATE_PATH)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--standalone", action="store_true",
+                        help="wrap in a full HTML document for hosting outside "
+                             "the Artifact runtime, e.g. GitHub Pages")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point; returns a process exit code."""
     args = build_parser().parse_args(argv)
-    return build(Path(args.template), Path(args.output))
+    return build(Path(args.template), Path(args.output), args.standalone)
 
 
 if __name__ == "__main__":
