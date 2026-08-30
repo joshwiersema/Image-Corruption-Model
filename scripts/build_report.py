@@ -7,7 +7,7 @@ own images and can be published or emailed as one file.
 Usage::
 
     python scripts/build_report.py
-    python scripts/build_report.py --output visuals/report.html
+    python scripts/build_report.py --output docs/index.html
 """
 
 from __future__ import annotations
@@ -22,9 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src import config  # noqa: E402
 
-TEMPLATE_PATH: Path = Path(__file__).resolve().parent / "report_template.html"
+TEMPLATE_PATH: Path = Path(__file__).resolve().parent / "report_v2_template.html"
 VISUAL_DIR: Path = config.PROJECT_ROOT / "visuals"
-DEFAULT_OUTPUT: Path = VISUAL_DIR / "report.html"
+DEFAULT_OUTPUT: Path = VISUAL_DIR / "report_v2.html"
 
 PLACEHOLDER = re.compile(r"\{\{IMG:([A-Za-z0-9_\-]+)\}\}")
 STYLE_PLACEHOLDER: str = "{{STYLE}}"

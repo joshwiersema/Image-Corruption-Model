@@ -108,8 +108,7 @@ python scripts/make_visuals.py --checkpoint checkpoints/pretrained/best.pt \
     --source-dir data/game_frames
 
 # Rebuild the HTML report from those figures
-python scripts/build_report.py --template scripts/report_v2_template.html \
-    --output visuals/report_v2.html
+python scripts/build_report.py
 ```
 
 > **In a hurry?** `python scripts/fetch_game_frames.py --count 300` downloads ~80 MB and is
@@ -377,7 +376,7 @@ scripts/make_visuals.py       every figure in visuals/
 scripts/compare_models.py     score two checkpoints on identical frames and faults
 scripts/domain_check.py       measure how far a checkpoint transfers to other imagery
 scripts/build_report.py       inline the figures into a self-contained HTML report
-scripts/report_*_template.html, report_style.css, viz_style.py   report and figure styling
+scripts/report_v2_template.html, report_style.css, viz_style.py  report and figure styling
 
 checkpoints/pretrained/       the released model, its training history and its metrics
 visuals/                      every figure, and the built HTML report

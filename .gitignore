@@ -20,5 +20,5 @@ checkpoints/pretrained/*
 !checkpoints/pretrained/eval_metrics.json
 !checkpoints/pretrained/confusion_matrix.png
 
-# Rebuilt from the templates by scripts/build_report.py.
+# Output of the retired first-iteration report template.
 visuals/report.html
