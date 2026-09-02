@@ -1,4 +1,4 @@
-# Render Fault Detector
+# Render Fault Detector: https://joshwiersema.github.io/Image-Corruption-Model/
 
 **A 1.2M-parameter CNN that looks at one rendered game frame and says whether the GPU
 that drew it was misbehaving — and which way — in ~12 ms on a CPU.**
